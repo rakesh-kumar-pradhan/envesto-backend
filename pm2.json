@@ -1,0 +1,9 @@
+{
+    "apps": [
+        {
+            "name": "envesto-backend",
+            "script": "npm",
+            "args": "run start:staging"
+        }
+    ]
+}
