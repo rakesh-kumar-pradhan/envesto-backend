@@ -32,7 +32,6 @@ export class RestServer {
         preflightContinue: false,
       };
     private engine = require('ejs-locals');
-    // private sslServer;
 
     constructor() {
         this._app = express();
@@ -112,17 +111,17 @@ export class RestServer {
     }
 
     public startServer(PORT: string | undefined, ENV: string | undefined) {
-        // this._app.listen(PORT, () => {
-        //     logger.info('server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
-        // });
+        this._app.listen(PORT, () => {
+            logger.info('HTTP server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
+        });
 
-        let sslServer = https.createServer({
-          key: readFileSync(join(__dirname, '/../cert', 'key.pem')),
-          cert: readFileSync(join(__dirname, '/../cert', 'cert.pem'))
-        }, this._app);
+        // let sslServer = https.createServer({
+        //   key: readFileSync(join(__dirname, '/../cert', 'key.pem')),
+        //   cert: readFileSync(join(__dirname, '/../cert', 'cert.pem'))
+        // }, this._app);
 
-        sslServer.listen(PORT, () => {
-          logger.info('server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
-        })
+        // sslServer.listen(PORT, () => {
+        //   logger.info('HTTPS server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
+        // })
     }
 }

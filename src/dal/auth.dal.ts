@@ -45,16 +45,22 @@ export class AuthDal {
         return new Promise(async (resolve, reject) => {
             try {
                 const {phone, email} = data;
+                let user;
                 const isUserExist = await Users.findOne({$or: [{phone: phone}, {email: email}]});
+                
                 if(isUserExist) {
-                    const {otp, token} = generateOtp();
-                    resolve({otp, token, status: true, message: "OTP sent to registered phone number"});
-                    
-                    const message = `${otp} is your one time password. It is valid for 5 min. Do not share your OTP with anyone`;
-                    await sendSms(message, phone);
-                } else {
-                    return resolve({message: phone ? "Invalid phone number" : "Invalid Email", status: false});
+                    user = isUserExist;
                 }
+                 else {
+                    const newUser = new Users({phone});
+                    user = await newUser.save();
+                }
+                const {otp, token} = generateOtp();
+                resolve({otp, token, status: true, message: "OTP sent to registered phone number"});
+                
+                const message = `${otp} is your one time password. It is valid for 5 min. Do not share your OTP with anyone`;
+                await sendSms(message, phone);
+
             } catch (error: any) {
                 return reject(error);
             }  
