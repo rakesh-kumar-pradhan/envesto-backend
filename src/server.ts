@@ -2,7 +2,7 @@ import express, { Application, json, NextFunction, Request, Response, urlencoded
 import helmet from 'helmet';
 import { IError } from '@interfaces/index';
 import {BAD_REQUEST, getReasonPhrase, NOT_FOUND} from 'http-status-codes';
-import { createWriteStream } from "fs";
+import { createWriteStream, readFileSync } from "fs";
 import { join } from "path";
 import morgan from "morgan";
 import {loggerMidlleware} from "@middlewares/index";
@@ -13,6 +13,7 @@ import webRouter from './routes/web/index';
 import session from "express-session";
 import sessionData from "./config/session/session.config";
 import cookieParser from "cookie-parser";
+import https from 'https';
 
 export class RestServer {
     private _app: Application;
@@ -31,6 +32,7 @@ export class RestServer {
         preflightContinue: false,
       };
     private engine = require('ejs-locals');
+    // private sslServer;
 
     constructor() {
         this._app = express();
@@ -110,8 +112,17 @@ export class RestServer {
     }
 
     public startServer(PORT: string | undefined, ENV: string | undefined) {
-        this._app.listen(PORT, () => {
-            logger.info('server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
-        });
+        // this._app.listen(PORT, () => {
+        //     logger.info('server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
+        // });
+
+        let sslServer = https.createServer({
+          key: readFileSync(join(__dirname, '/../cert', 'key.pem')),
+          cert: readFileSync(join(__dirname, '/../cert', 'cert.pem'))
+        }, this._app);
+
+        sslServer.listen(PORT, () => {
+          logger.info('server is running on PORT: ' + PORT + '\n Environment: ' + ENV)
+        })
     }
 }
