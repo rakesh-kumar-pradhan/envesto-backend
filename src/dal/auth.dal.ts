@@ -2,11 +2,12 @@
 import { statSync } from 'fs';
 import { join } from 'path';
 import { RedisService } from '../services/redish.service';
-import { ISignUpUser, IRequest } from '@interfaces/index';
+import { ISignUpUser, IRequest, IAdminLogin, ILoggedInUser } from '@interfaces/index';
 import { Users } from '../models/index';
 import { generateOtp, verifyOtp, sendSms } from '../utils/auth.utils';
 import { logger } from '../services/logger.service';
 import { IOtp } from '../interfaces/auth.interface';
+import { verifyOtpToken, generateToken } from '../services/jwt.service';
 
 export class AuthDal {
     private rds = new RedisService();
@@ -44,10 +45,9 @@ export class AuthDal {
     public async onLoginWithPhoneOtp(data: any) {
         return new Promise(async (resolve, reject) => {
             try {
-                const {phone, email} = data;
+                const {phone} = data;
                 let user;
-                const isUserExist = await Users.findOne({$or: [{phone: phone}, {email: email}]});
-                
+                const isUserExist = await Users.findOne({phone: phone});
                 if(isUserExist) {
                     user = isUserExist;
                 }
@@ -55,13 +55,14 @@ export class AuthDal {
                     const newUser = new Users({phone});
                     user = await newUser.save();
                 }
-                const {otp, token} = generateOtp();
+                const {otp, token} = generateOtp(phone);
                 resolve({otp, token, status: true, message: "OTP sent to registered phone number"});
                 
                 const message = `${otp} is your one time password. It is valid for 5 min. Do not share your OTP with anyone`;
-                await sendSms(message, phone);
+                // await sendSms(message, phone);
 
             } catch (error: any) {
+                console.log(error);
                 return reject(error);
             }  
         })
@@ -70,9 +71,13 @@ export class AuthDal {
     public async onVerifyOtp(data: IOtp) {
         return new Promise(async (resolve, reject) => {
             try {
-                const isOtpValid = verifyOtp(data);
+                const isOtpValid = await verifyOtpToken(data);
                 if(isOtpValid.status) {
-
+                    const phone = isOtpValid.data.phone;
+                    const userDetails: any = await Users.findOne({phone: phone}).select('_id phone role email');
+                    const payload = {_id: userDetails._id, phone: userDetails.phone, role: userDetails.role};
+                    const token = generateToken(payload);
+                    return resolve({token, userDetails, status: true});
                 } else return resolve(isOtpValid);
             } catch (error: any) {
                 return reject(error);
@@ -80,21 +85,24 @@ export class AuthDal {
         })
     }
 
-    public async onSignIn(data: IRequest) {
+    public async onSignIn(data: IAdminLogin) {
         return new Promise(async (resolve, reject) => {
             try {
                 
-                const userData: ISignUpUser = data.body!;
+               let {email, password} = data;
 
-                const isEmailExist = await Users.findOne({email: userData.email});
-                if(isEmailExist) return resolve({message: "Email already exist", status: false});
+                const isEmailExist = await Users.findOne({email: email});
+                if(isEmailExist) {
+                    password = ''
+                    // const isPhoneExist = await Users.findOne({phone: phone});
+                }
 
-                const isPhoneExist = await Users.findOne({phone: userData.phone});
-                if(isPhoneExist) return resolve({message: "Mobile already exist", status: false});
+               
+                // if(isPhoneExist) return resolve({message: "Mobile already exist", status: false});
 
-                const newUser = new Users(userData);
-                const saveUser = await newUser.save();
-                return resolve({user: saveUser, status: true});
+                // const newUser = new Users(userData);
+                // const saveUser = await newUser.save();
+                return resolve({status: true});
             } catch (error: any) {
                 return reject(error.errors);
             }  

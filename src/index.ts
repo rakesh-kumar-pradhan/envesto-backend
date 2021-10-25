@@ -1,5 +1,5 @@
 import 'module-alias/register';
-require('custom-env').env(['staging', 'development'], './env');
+require('custom-env').env('development', './env');
 import { RestServer } from './server';
 import { mongoConnect } from '@config/db/mongo.db';
 // const ports = [3009, 3001, 3002, 3003];

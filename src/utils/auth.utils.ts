@@ -2,19 +2,16 @@ import { IOtp } from '../interfaces/auth.interface';
 import crypto from 'crypto';
 import { logger } from '../services/logger.service';
 // import fast2sms from '../config/sms.config';
+import { generateOtpToken } from '../services/jwt.service';
 const otpGenerator = require('otp-generator');
 
 const key = process.env.OTP_SECRET as string;
 
-export const generateOtp = (): IOtp => {
+export const generateOtp = (phone: string): IOtp => {
     try {
         const otp      = otpGenerator.generate(6, {alphabets: false, upperCase: false, specialChars: false});
-        const ttl      = 5 * 60 * 1000; //5 Minutes in miliseconds
-        const expires  = Date.now() + ttl; //timestamp to 5 minutes in the future
-        const data     = `${otp}.${expires}`; // phone.otp.expiry_timestamp
-        const hash     = crypto.createHmac("sha256", key).update(data).digest("hex");
-        const fullHash = `${hash}.${expires}`;
-        const otpData: IOtp = {otp: otp, token: fullHash};
+        const token = generateOtpToken(phone, otp);
+        const otpData: IOtp = {otp: otp, token: token};
         return otpData;
     } catch (error) {
         throw error;
