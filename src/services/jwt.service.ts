@@ -29,7 +29,8 @@ export const verifyToken = async (token: string) => {
         if(!tokenUser) {
             return {status: false, error: 'Unauthorised user'};
         }
-        return token;
+        return {status: true, user: tokenUser};
+
     } catch (error) {
         throw new Error('Invalid token');
     }

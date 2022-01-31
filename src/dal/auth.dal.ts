@@ -47,6 +47,7 @@ export class AuthDal {
             try {
                 const {phone} = data;
                 let user;
+                console.log(phone);
                 const isUserExist = await Users.findOne({phone: phone});
                 if(isUserExist) {
                     user = isUserExist;

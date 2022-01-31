@@ -4,3 +4,4 @@ export * from './user.interface';
 export * from './request.interface'
 export * from './auth.interface';
 export * from './pagination.interface';
+export * from './feed.interface'
