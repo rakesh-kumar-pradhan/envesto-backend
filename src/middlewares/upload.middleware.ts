@@ -10,7 +10,7 @@ const s3 = new AWS.S3({
 });
 
 const fileFilter = (req: Request, file: any, cb: any) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4') {
         cb(null, true)
     } else {
         cb("Error: Allow files only of extensions jpeg|jpg|png !");

@@ -10,7 +10,7 @@ import { IOtp } from '../interfaces/auth.interface';
 import { verifyOtpToken, generateToken } from '../services/jwt.service';
 
 export class AuthDal {
-    private rds = new RedisService();
+    //  private rds = new RedisService();
 
     constructor() { }
 

@@ -2,6 +2,7 @@ import { Feed } from "../models/index";
 import { Pagination, IRequest, IFeed } from '../interfaces';
 import { getUserFromRequest } from "../helpers/request.helper";
 import { Request } from "express";
+import { json } from "node:stream/consumers";
 
 export class FeedDal {
     public async postFeed(data: IFeed, files: any, user: any) {
@@ -24,6 +25,8 @@ export class FeedDal {
                 }
                 data.image = image;
                 data.addedBy = user._id;
+               let  monetization=JSON.parse(data.monetization.toString());
+                data.monetization=monetization;
                 const newFeed = new Feed(data);
                 const saveFeed = await newFeed.save();
                 return resolve({details: saveFeed, status: true});
