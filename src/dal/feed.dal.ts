@@ -29,7 +29,7 @@ export class FeedDal {
                 data.monetization=monetization;
                 const newFeed = new Feed(data);
                 const saveFeed = await newFeed.save();
-                return resolve({details: saveFeed, status: true});
+                return resolve({data: saveFeed,message:"Feed content saved successfully !!", status: true});
             } catch (error: any) {
                 return reject(error);
             }
