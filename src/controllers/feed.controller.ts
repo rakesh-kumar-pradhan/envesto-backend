@@ -29,4 +29,14 @@ export class FeedController {
             return res.status(INTERNAL_SERVER_ERROR).send({error});
         }
     }
+
+    public static async fetchAllFeedContent(req: Request, res: Response) {
+        try {
+            const response: any = await feed.fetchAllFeedList(req);
+            if(response.status) return res.status(OK).json(response);
+            else return res.status(CONFLICT).json(response);
+        } catch (error) {
+            return res.status(INTERNAL_SERVER_ERROR).send({error});
+        }
+    }
 }

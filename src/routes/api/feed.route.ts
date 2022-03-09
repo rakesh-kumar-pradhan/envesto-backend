@@ -36,14 +36,19 @@ feedRouter.use(verifyUserToken);
  *                       "premium2",
  *                       "premium3"
  *                   ]
- *               }
+ *               },
+ *               "premium": [
+ *                       "premium1",
+ *                       "premium2",
+ *                       "premium3"
+ *                   ]
  *           }
  *       ],
  *       "tag": ["tag-1","tag-2"],
  *       "thumbnailImage": "thumbnailImage",
  *       "image": ["image-1","image-2"],
  *       "video": "video"
-}
+ *  }
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
@@ -83,7 +88,7 @@ feedRouter.post("/", upload.any(), FeedController.postFeedContent);
  *     {
  *       "status": true,
  *       "error": false,
- *       "message": "Feed contents fetched successfully !!",
+ *       "message": "All Feed contents fetched successfully !!",
  *       "data": object
  *     }
  *
@@ -97,5 +102,6 @@ feedRouter.post("/", upload.any(), FeedController.postFeedContent);
  *     }
  */
 feedRouter.get("/:id?/:page/:perPage?", FeedController.fetchFeedContent);
+feedRouter.get("/", FeedController.fetchAllFeedContent);
 
 export default feedRouter;

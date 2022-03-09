@@ -60,4 +60,28 @@ export class FeedDal {
         })
         
     }
+
+    public fetchAllFeedList(data: IRequest) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const user = getUserFromRequest(data as Request);
+                const pagination: Pagination = data.params;
+                const limit = Math.abs(Number(pagination.perPage)) || process.env.PERPAGE;
+                const page = Math.max(0, Number(pagination.page));
+                const feedId = data.params.id;
+                const condition: {[key:string]: string} = {};
+                if(feedId) {
+                    condition['_id'] = feedId;
+                }
+                if(user._id) {
+                    condition['addedBy'] = user._id;
+                }
+                const lists = await Feed.find(condition).sort({createdAt: 'desc'});
+                return resolve({status: true,data:lists,message:"All Feed contents fetched successfully !!"});
+            } catch (error) {
+                console.log(error);
+                return reject(error);
+            }
+        })
+    }
 }
