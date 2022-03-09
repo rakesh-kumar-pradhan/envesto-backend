@@ -89,21 +89,23 @@ export class AuthDal {
     public async onSignIn(data: IAdminLogin) {
         return new Promise(async (resolve, reject) => {
             try {
-                
                let {email, password} = data;
-
                 const isEmailExist = await Users.findOne({email: email});
                 if(isEmailExist) {
-                    password = ''
-                    // const isPhoneExist = await Users.findOne({phone: phone});
+                    const userDetails: any = await Users.findOne({email:email,password:password}).select('_id phone role email');
+                    if(userDetails) {
+                    const payload = {_id: userDetails._id, phone: userDetails.phone, role: userDetails.role};
+                    const token = generateToken(payload);
+                    return resolve({token, userDetails, status: true});
+                    }else{
+                        return resolve({status: false,messsage:"Invalid password"});
+                    }
                 }
 
-               
                 // if(isPhoneExist) return resolve({message: "Mobile already exist", status: false});
 
                 // const newUser = new Users(userData);
                 // const saveUser = await newUser.save();
-                return resolve({status: true});
             } catch (error: any) {
                 return reject(error.errors);
             }  

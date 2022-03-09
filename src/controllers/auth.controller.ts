@@ -46,10 +46,10 @@ export abstract class AuthController {
 
     public static async onSignIn(req: Request, res: Response) {
         try {
-            const response: any = await authDal.onSignIn(req.body);
-            if(response.status)
-                return res.status(CREATED).send({response});
-            else return res.status(CONFLICT).send({response});
+            const data: any = await authDal.onSignIn(req.body);
+            if(data.status)
+                return res.status(CREATED).send({data});
+            else return res.status(CONFLICT).send({data});
         } catch (error) {
             return res.status(INTERNAL_SERVER_ERROR).send({error});
         }

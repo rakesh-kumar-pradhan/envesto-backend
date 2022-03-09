@@ -21,7 +21,9 @@ const authRouter = Router();
  *  "name":"full name",
  *  "email": "email",
  *  "phone": "phone",
- *  "password":"password"
+ *  "password":"password",
+ *  "dob":"dob",
+ *  "country":"country"
  * }
  *
  * @apiSuccessExample Success-Response:
@@ -42,11 +44,49 @@ const authRouter = Router();
  *        "message": "Something went wrong"
  *     }
  */
-authRouter.post('/sign-up', AuthController.onSignUp);
+authRouter.post("/sign-up", AuthController.onSignUp);
 
-authRouter.post('/login', AuthController.onLoginWithPhoneOtp);
-authRouter.post('/verify-otp', AuthController.onVerifyOtp);
-authRouter.post('/sign-in', AuthController.onSignIn);
-authRouter.get('/video', AuthController.getVideo);
+/******************************************************************************
+ *                     Sign-In - "POST /api/auth/sign-in"
+ ******************************************************************************/
+/**
+ * @api {POST} /api/auth/sign-in sign-in
+ * @apiName auth-sign-in-POST
+ * @apiGroup auth
+ * @apiHeader {String} Authorization Bearer token
+ *
+ * @apiSuccess {boolean} error for checking the error.
+ * @apiSuccess {String} message for information.
+ * @apiSuccess {object} data for payload.
+ *
+ * @apiExample Sample-Request:
+ * {
+ *  "email": "email",
+ *  "password":"password"
+ * }
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "status": true,
+ *       "error": false,
+ *       "message": "Sign-in successfully !!"
+ *       "data": object
+ *     }
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 401 unauthorized request
+ *     {
+ *        "status": false
+ *        "error": true,
+ *        "message": "Something went wrong"
+ *     }
+ */
+authRouter.post("/sign-in", AuthController.onSignIn);
+
+authRouter.post("/login", AuthController.onLoginWithPhoneOtp);
+authRouter.post("/verify-otp", AuthController.onVerifyOtp);
+authRouter.get("/video", AuthController.getVideo);
 
 export default authRouter;
