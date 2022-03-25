@@ -2,7 +2,9 @@ import { Feed } from "../models/index";
 import { Pagination, IRequest, IFeed } from '../interfaces';
 import { getUserFromRequest } from "../helpers/request.helper";
 import { Request } from "express";
+import { FileUtils } from "../utils";
 import { json } from "node:stream/consumers";
+import { upload } from "../middlewares";
 
 export class FeedDal {
     public async postFeed(data: IFeed, files: any, user: any) {
@@ -23,9 +25,28 @@ export class FeedDal {
                             data.video = fileLocation
                     }
                 }
-                data.image = image;
+
+            let curriculumData=[]
+            if(data.type==="course"){
+          let  curriculum=JSON.parse(data.curriculum.toString());
+          for (let file of curriculum) {
+            const video = await FileUtils.saveFile(file.video);
+            const thumbnailImage = await FileUtils.saveFile(
+              file.thumbnailImage
+            );
+            curriculum.video = video;
+            curriculum.thumbnailImage = thumbnailImage;
+            curriculumData.push({
+              thumbnailImage,
+              video,
+              title: file.title,
+              description: file.description,
+            });
+          }
+                data.curriculum=curriculumData;
+        }
                 data.addedBy = user._id;
-               let  monetization=JSON.parse(data.monetization.toString());
+                let  monetization=JSON.parse(data.monetization.toString());
                 data.monetization=monetization;
                 const newFeed = new Feed(data);
                 const saveFeed = await newFeed.save();

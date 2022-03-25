@@ -22,9 +22,18 @@ feedRouter.use(verifyUserToken);
  * @apiExample Sample-Request:
  *{
  *       "title": "title",
+ *       "subTitle":"subTitle",
  *       "description": "description",
  *       "category": "category",
+ *       "subCategory":"subCategory",
  *       "monetizationModeType": "free"/"paid"/"premium",
+ *        "curriculum":[
+ *            "title": "title",
+ *            "description": "description",
+ *             "video": "video",
+ *             "thumbnailImage": "thumbnailImage"
+ *             ],
+ *         "type":"course"/"content",
  *       "monetization": [
  *          {
  *               "allowAudienceSupport": true/false,
