@@ -113,4 +113,42 @@ feedRouter.post("/", upload.any(), FeedController.postFeedContent);
 feedRouter.get("/:id?/:page/:perPage?", FeedController.fetchFeedContent);
 feedRouter.get("/", FeedController.fetchAllFeedContent);
 
+/******************************************************************************
+ *                     Update Feed status Active/Inctive  - "Update /api/Feed/status"
+ ******************************************************************************/
+/**
+ * @api {UPDATE} /api/Feed/status update feed
+ * @apiName Feed-Update-feed-Status-UPDATE
+ * @apiGroup Feed
+ * @apiHeader {String} Authorization Bearer token
+ *
+ * @apiSuccess {boolean} error for checking the error.
+ * @apiSuccess {String} message for information.
+ * @apiSuccess {object} data for JSON.
+ *
+ * {
+ *       "feedId":"feedId",
+ *       "status": "title"
+ * }
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "status": true,
+ *       "error": false,
+ *       "message": "Feed Status updated successfully !!",
+ *       "data": object
+ *     }
+ *
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 404 unauthorized request
+ *     {
+ *        "status": false
+ *        "error": true,
+ *        "message": "Something went wrong"
+ *     }
+ */
+ feedRouter.put("/status", FeedController.updateFeedStatus);
+
 export default feedRouter;
